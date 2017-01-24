@@ -35,6 +35,7 @@ import branding
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangoapps.site_configuration.models import SiteConfiguration
 
 
 log = logging.getLogger(__name__)
@@ -420,7 +421,11 @@ def get_cms_course_link(course, page='course'):
     """
     # This is fragile, but unfortunately the problem is that within the LMS we
     # can't use the reverse calls from the CMS
-    return u"//{}/{}/{}".format(settings.CMS_BASE, page, unicode(course.id))
+    return u"//{}/{}/{}".format(
+        SiteConfiguration.get_value_for_org(course.org, "CMS_BASE", settings.CMS_BASE ),
+        page,
+        unicode(course.id)
+        )
 
 
 def get_cms_block_link(block, page):
